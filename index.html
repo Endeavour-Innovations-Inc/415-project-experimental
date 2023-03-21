@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Waveform Example</title>
+  <style>
+    body {
+      background-color: #181818;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #33ee55;
+      box-shadow: 0 0 10px rgba(51, 238, 85, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="waveformCanvas" width="800" height="600"></canvas>
+  <script>
+    const file = "sin_gen.csv";
+    fetch(file)
+      .then(response => response.text())
+      .then(data => {
+        const lines = data.split("\n");
+        const times = [];
+        const sineVals = [];
+        for (let i = 1; i < lines.length; i++) {
+          const fields = lines[i].split(",");
+          times.push(parseFloat(fields[0]));
+          sineVals.push(parseFloat(fields[1]));
+        }
+
+        const canvas = document.getElementById("waveformCanvas");
+        const context = canvas.getContext("2d");
+
+        // Draw the waveform on the canvas
+        context.strokeStyle = "#33ee55";
+        context.beginPath();
+        context.moveTo(0, canvas.height / 2);
+        for (let i = 0; i < sineVals.length; i += 1) {
+          let x = (i / sineVals.length) * canvas.width;
+          let v = sineVals[i];
+          let y = (v * canvas.height) / 2 + canvas.height / 2;
+          context.lineTo(x, y);
+        }
+        context.stroke();
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
